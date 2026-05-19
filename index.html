@@ -1,12 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的个人网站</title>
+    <title>我的个人专属主页</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1e3a8a;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        /* 时间显示样式 */
+        #clock {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2563eb;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+        /* 养生小贴士 */
+        .tips {
+            background-color: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 12px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 15px;
+            text-align: left;
+            line-height: 1.5;
+        }
+        /* 大按钮样式 */
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .btn {
+            display: block;
+            padding: 15px;
+            background-color: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn:active {
+            background-color: #1d4ed8;
+        }
+    </style>
 </head>
-<body style="text-align: center; padding-top: 50px; font-family: sans-serif;">
-    <h1>你好，世界！</h1>
-    <p>这是我爹完全用手机在 GitHub Pages 搭建的网站！</p>
+<body>
+
+<div class="container">
+    <h1>我的个人主页</h1>
+    <div class="subtitle">完全用手机在 GitHub 搭建</div>
+
+    <div id="clock">00:00:00</div>
+
+    <div class="tips">
+        <strong>💡 今日养生提醒：</strong><br>
+        1. 饭后记得用温水或淡盐水漱口，保护好那颗松动的牙齿。<br>
+        2. 顺时针摩腹50次，促进肠胃蠕动。<br>
+        3. 每隔一小时站起来走动走动。
+    </div>
+
+    <div class="btn-grid">
+        <a class="btn" href="https://www.baidu.com" target="_blank">百度一下</a>
+        <a class="btn" href="https://www.toutiao.com" target="_blank">今日头条</a>
+        <a class="btn" href="https://v.qq.com" target="_blank">腾讯视频</a>
+        <a class="btn" href="https://news.sina.com.cn" target="_blank">新浪新闻</a>
+    </div>
+</div>
+
+<script>
+    // 电子时钟核心代码
+    function updateTime() {
+        const now = new Date();
+        const hrs = String(now.getHours()).padStart(2, '0');
+        const mins = String(now.getMinutes()).padStart(2, '0');
+        const secs = String(now.getSeconds()).padStart(2, '0');
+        document.getElementById('clock').innerText = `${hrs}:${mins}:${secs}`;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+</script>
+
 </body>
 </html>
