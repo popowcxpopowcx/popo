@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的个人专属主页</title>
     <style>
+
         /* 基础样式复位与优雅的渐变背景 */
         * {
             box-sizing: border-box;
@@ -61,43 +62,6 @@
             font-weight: 500;
         }
 
-        /* 养生提醒卡片 */
-        .card-tips {
-            background: #f0f4ff;
-            border-left: 5px solid #2b66ff;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(43, 102, 255, 0.05);
-        }
-        .tips-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1a4ba3;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .tips-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .tips-list li {
-            font-size: 14px;
-            line-height: 1.5;
-            color: #4e5d78;
-        }
-        .dynamic-tip {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px dashed rgba(43, 102, 255, 0.2);
-            font-size: 13px;
-            color: #2b66ff;
-            font-style: italic;
-        }
-
         /* 导航按钮网格 */
         .nav-grid {
             display: grid;
@@ -117,9 +81,10 @@
             transition: all 0.2s ease;
             -webkit-tap-highlight-color: transparent; /* 清除手机点击阴影 */
         }
-        /* 手机端按下效果 */
+        /* 手机端按下效果优化 */
         .nav-btn:active {
-            transform: scale(0.96);
+            transform: scale(0.95);
+            opacity: 0.9;
             background: #255ee0;
             box-shadow: 0 3px 10px rgba(59, 116, 255, 0.15);
         }
@@ -132,29 +97,22 @@
             <h1>我的个人主页</h1>
             <div class="subtitle">完全用手机在 GitHub 搭建</div>
             <div class="time-display" id="clock">00:00:00</div>
-            <div class="date-display" id="date">2026年01px月01px日 星期一</div>
+            <div class="date-display" id="date">2026年01月01日 星期一</div>
         </div>
 
-        <div class="card-tips">
-            <div class="tips-title">💡 今日养生提醒：</div>
-            <ul class="tips-list">
-                <li>1. 饭后记得用温水或淡盐水漱口，保护好那颗松动的牙齿。</li>
-                <li>2. 顺时针摩腹50次，促进肠胃蠕动。</li>
-                <li>3. 每隔一小时站起来走动走动。</li>
-            </ul>
-            <div class="dynamic-tip" id="random-tip">✨ 正在加载今日健康小贴士...</div>
-        </div>
-
+        <!-- 导航网格 -->
         <div class="nav-grid">
             <a href="https://www.baidu.com" class="nav-btn" target="_blank">百度一下</a>
             <a href="https://www.zhihu.com" class="nav-btn" target="_blank">知乎</a>
             <a href="https://v.qq.com" class="nav-btn" target="_blank">腾讯视频</a>
             <a href="https://news.sina.com.cn" class="nav-btn" target="_blank">新浪新闻</a>
+            <a href="https://github.com" class="nav-btn" target="_blank">GitHub</a>
+            <a href="https://m.weibo.cn/p/index?containerid=106003type=25&t=3&disable_hot=1&filter_type=realtimehot&title=微博热搜&show_cache_when_error=1&extparam=seat=1&cate=10103&pos=0_0&region_relas_conf=0&c_type=30&dgr=0&filter_type=realtimehot&lcate=1001&mi_cid=100103&display_time=1694559106&pre_seqid=383600415&luicode=10000011&lfid=102803" class="nav-btn" target="_blank">微博热搜</a>
         </div>
     </div>
 
     <script>
-        // 1. 动态时钟与日期更新
+        // 动态时钟与日期更新
         function updateClock() {
             const now = new Date();
             
@@ -174,21 +132,6 @@
         }
         setInterval(updateClock, 1000);
         updateClock(); // 首次加载立即执行
-
-        // 2. 动态养生小金句库（每次打开或刷新随机显示一条）
-        const healthTips = [
-            "✨ 提示：晨起一杯温开水，唤醒身体新代谢。",
-            "✨ 提示：久坐伤肉，伸个懒腰，活动一下颈椎吧。",
-            "✨ 提示：春生夏长，顺应四季，多吃时令蔬果。",
-            "✨ 提示：闭目养神三分钟，缓解眼睛酸痛和疲劳。",
-            "✨ 提示：晚间泡脚二十分钟，微微出汗最养神。",
-            "✨ 提示：少吃生冷，多喝温水，调理脾胃是关键。"
-        ];
-        function initRandomTip() {
-            const randomIndex = Math.floor(Math.random() * healthTips.length);
-            document.getElementById('random-tip').textContent = healthTips[randomIndex];
-        }
-        initRandomTip();
     </script>
 
 </body>
