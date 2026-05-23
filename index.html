@@ -120,17 +120,17 @@
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             border: 1.5px solid #fff;
-            display: none;
-        }
-        .custom-item:hover .delete-btn,
-        .custom-item .delete-btn {
-            display: block;
+            display: block; /* 自定义按钮直接显示删除标志 */
         }
 
-        /* 底部的添加按钮 */
-        .add-btn-container {
+        /* 底部的添加与备份工具栏 */
+        .action-area {
             text-align: center;
             margin-top: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
         .add-btn {
             display: inline-block;
@@ -149,6 +149,19 @@
             background: rgba(59, 116, 255, 0.15);
             transform: scale(0.98);
         }
+        .backup-tools {
+            display: flex;
+            gap: 15px;
+        }
+        .tools-link {
+            font-size: 12px;
+            color: #8a99ad;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .tools-link:active {
+            color: #3b74ff;
+        }
     </style>
 </head>
 <body>
@@ -161,7 +174,7 @@
             <div class="date-display" id="date">2026年01月01日 星期一</div>
         </div>
 
-        <!-- 导航网格：仅保留 GitHub 和 微博热搜 -->
+        <!-- 导航网格 -->
         <div class="nav-grid" id="nav-grid">
             <div class="nav-item"><a href="https://github.com" class="nav-btn" target="_blank">GitHub</a></div>
             <div class="nav-item"><a href="https://s.weibo.com/top/summary?cate=realtimehot" class="nav-btn" target="_blank">微博热搜</a></div>
@@ -169,9 +182,15 @@
             <!-- 自定义添加的网站会自动接在后面 -->
         </div>
 
-        <!-- 网页直接操作的添加按钮 -->
-        <div class="add-btn-container">
+        <!-- 操作区 -->
+        <div class="action-area">
             <a href="javascript:void(0);" class="add-btn" onclick="addCustomLink()">+ 添加自定义导航</a>
+            
+            <!-- 方案B：跨浏览器备份导入工具 -->
+            <div class="backup-tools">
+                <span class="tools-link" onclick="exportLinks()">📤 备份数据</span>
+                <span class="tools-link" onclick="importLinks()">📥 导入数据</span>
+            </div>
         </div>
     </div>
 
@@ -194,7 +213,7 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // 2. 网页无代码添加/删除网站逻辑
+        // 2. 网页无代码添加/删除/备份/导入网站逻辑
         const STORAGE_KEY = 'my_custom_links';
 
         function getCustomLinks() {
@@ -243,6 +262,41 @@
                 links.splice(index, 1);
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(links));
                 renderCustomLinks();
+            }
+        }
+
+        // 导出备份口令
+        function exportLinks() {
+            const links = localStorage.getItem(STORAGE_KEY);
+            if (!links || links === '[]') {
+                alert("你当前还没有添加任何自定义网站，无需备份。");
+                return;
+            }
+            // 使用 base64 简单编码，方便复制且不易出错
+            const backupCode = btoa(unescape(encodeURIComponent(links)));
+            prompt("这是你的导航数据备份口令，请复制并保存好。在其他浏览器点击“导入数据”粘入即可：", backupCode);
+        }
+
+        // 导入备份口令
+        function importLinks() {
+            const backupCode = prompt("请粘贴你之前备份的导航数据口令：");
+            if (!backupCode) return;
+            
+            try {
+                const decodedLinks = decodeURIComponent(escape(atob(backupCode)));
+                // 验证是不是合法的JSON
+                const parsed = JSON.parse(decodedLinks);
+                if (Array.isArray(parsed)) {
+                    if (confirm("导入后会覆盖当前浏览器中已有的自定义链接，确定导入吗？")) {
+                        localStorage.setItem(STORAGE_KEY, decodedLinks);
+                        renderCustomLinks();
+                        alert("数据导入成功！");
+                    }
+                } else {
+                    alert("口令格式错误，请检查是否复制完整！");
+                }
+            } catch (e) {
+                alert("无效的备份口令，解析失败！");
             }
         }
 
