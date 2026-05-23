@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的个人专属主页</title>
     <style>
-
         /* 基础样式复位与优雅的渐变背景 */
         * {
             box-sizing: border-box;
@@ -30,7 +29,7 @@
             gap: 20px;
         }
 
-        /* 顶部时钟卡片美化 */
+        /* 顶部时钟卡片 */
         .card-clock {
             background: #ffffff;
             border-radius: 24px;
@@ -68,7 +67,15 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
         }
+        
+        /* 统一按钮样式包裹层 */
+        .nav-item {
+            position: relative;
+            width: 100%;
+        }
+
         .nav-btn {
+            display: block;
             background: #3b74ff;
             color: #ffffff;
             text-decoration: none;
@@ -79,14 +86,68 @@
             font-weight: 500;
             box-shadow: 0 6px 20px rgba(59, 116, 255, 0.25);
             transition: all 0.2s ease;
-            -webkit-tap-highlight-color: transparent; /* 清除手机点击阴影 */
+            -webkit-tap-highlight-color: transparent;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        /* 手机端按下效果优化 */
         .nav-btn:active {
             transform: scale(0.95);
             opacity: 0.9;
             background: #255ee0;
             box-shadow: 0 3px 10px rgba(59, 116, 255, 0.15);
+        }
+
+        /* 自定义添加的链接按钮样式 */
+        .custom-item .nav-btn {
+            background: linear-gradient(135deg, #4e7fff 0%, #3b74ff 100%);
+        }
+
+        /* 删除按钮小红叉 */
+        .delete-btn {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 78, 78, 0.9);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 18px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: 1.5px solid #fff;
+            display: none;
+        }
+        .custom-item:hover .delete-btn,
+        .custom-item .delete-btn {
+            display: block;
+        }
+
+        /* 底部的添加按钮 */
+        .add-btn-container {
+            text-align: center;
+            margin-top: 5px;
+        }
+        .add-btn {
+            display: inline-block;
+            background: rgba(59, 116, 255, 0.08);
+            color: #3b74ff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            border: 1px dashed rgba(59, 116, 255, 0.3);
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .add-btn:active {
+            background: rgba(59, 116, 255, 0.15);
+            transform: scale(0.98);
         }
     </style>
 </head>
@@ -100,29 +161,29 @@
             <div class="date-display" id="date">2026年01月01日 星期一</div>
         </div>
 
-        <!-- 导航网格：已更新微博热搜链接 -->
-        <div class="nav-grid">
-            <a href="https://www.baidu.com" class="nav-btn" target="_blank">百度一下</a>
-            <a href="https://www.zhihu.com" class="nav-btn" target="_blank">知乎</a>
-            <a href="https://v.qq.com" class="nav-btn" target="_blank">腾讯视频</a>
-            <a href="https://news.sina.com.cn" class="nav-btn" target="_blank">新浪新闻</a>
-            <a href="https://github.com" class="nav-btn" target="_blank">GitHub</a>
-            <a href="https://s.weibo.com/top/summary?cate=realtimehot" class="nav-btn" target="_blank">微博热搜</a>
+        <!-- 导航网格：仅保留 GitHub 和 微博热搜 -->
+        <div class="nav-grid" id="nav-grid">
+            <div class="nav-item"><a href="https://github.com" class="nav-btn" target="_blank">GitHub</a></div>
+            <div class="nav-item"><a href="https://s.weibo.com/top/summary?cate=realtimehot" class="nav-btn" target="_blank">微博热搜</a></div>
+            
+            <!-- 自定义添加的网站会自动接在后面 -->
+        </div>
+
+        <!-- 网页直接操作的添加按钮 -->
+        <div class="add-btn-container">
+            <a href="javascript:void(0);" class="add-btn" onclick="addCustomLink()">+ 添加自定义导航</a>
         </div>
     </div>
 
     <script>
-        // 动态时钟与日期更新
+        // 1. 动态时钟与日期更新
         function updateClock() {
             const now = new Date();
-            
-            // 时间部分
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
             
-            // 日期部分
             const year = now.getFullYear();
             const month = now.getMonth() + 1;
             const date = now.getDate();
@@ -131,7 +192,61 @@
             document.getElementById('date').textContent = `${year}年${month}月${date}日 ${day}`;
         }
         setInterval(updateClock, 1000);
-        updateClock(); // 首次加载立即执行
+        updateClock();
+
+        // 2. 网页无代码添加/删除网站逻辑
+        const STORAGE_KEY = 'my_custom_links';
+
+        function getCustomLinks() {
+            const links = localStorage.getItem(STORAGE_KEY);
+            return links ? JSON.parse(links) : [];
+        }
+
+        function renderCustomLinks() {
+            document.querySelectorAll('.custom-item').forEach(el => el.remove());
+            
+            const grid = document.getElementById('nav-grid');
+            const links = getCustomLinks();
+            
+            links.forEach((link, index) => {
+                const item = document.createElement('div');
+                item.className = 'nav-item custom-item';
+                item.innerHTML = `
+                    <a href="${link.url}" class="nav-btn" target="_blank">${link.name}</a>
+                    <div class="delete-btn" onclick="deleteLink(${index})">×</div>
+                `;
+                grid.appendChild(item);
+            });
+        }
+
+        function addCustomLink() {
+            const name = prompt("请输入网站名称（例如：哔哩哔哩）：");
+            if (!name) return;
+            
+            let url = prompt("请输入完整网址（例如：https://www.bilibili.com）：");
+            if (!url) return;
+
+            if (!/^https?:\/\//i.test(url)) {
+                url = 'https://' + url;
+            }
+
+            const links = getCustomLinks();
+            links.push({ name, url });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(links));
+            
+            renderCustomLinks();
+        }
+
+        function deleteLink(index) {
+            if (confirm("确定要删除这个导航按钮吗？")) {
+                const links = getCustomLinks();
+                links.splice(index, 1);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(links));
+                renderCustomLinks();
+            }
+        }
+
+        renderCustomLinks();
     </script>
 
 </body>
